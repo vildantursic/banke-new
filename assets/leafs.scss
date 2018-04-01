@@ -1,0 +1,39 @@
+.page-size {
+  padding: 2px 15%;
+
+  @media (max-width: 1400px) {
+    padding: 2px 5%;
+  }
+
+  @media (max-width: 1080px) {
+    padding: 2px 0;
+  };
+}
+
+.test {
+  width: 100% !important;
+  margin: 10px 0;
+}
+
+.logo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 35px;
+  font-weight: 800;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  @media (max-width: 512px) {
+    padding: 0 5px;
+  };
+
+  .and {
+    color: #D32F2F;
+    margin: 0 3px;
+  }
+}
