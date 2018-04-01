@@ -27,14 +27,14 @@
             </p>
           </div>
           <div>
+            <a target="_blank" href="http://banke.forumotion.me/">
+              <i class="big comments outline icon"></i>
+            </a>
             <a target="_blank" href="https://www.facebook.com/BankeBiznis/">
               <i class="big facebook square icon"></i>
             </a>
             <a target="_blank" href="https://twitter.com/?lang=en">
               <i class="big twitter square icon"></i>
-            </a>
-            <a class="forum-image" target="_blank" href="http://banke.forumotion.me/">
-              <img src="assets/images/forum.png" alt="">
             </a>
           </div>
         </div>

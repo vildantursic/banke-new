@@ -3,14 +3,13 @@
     <sui-grid celled>
       <sui-grid-row>
         <div class="header">
-          <img v-if="post._embedded['wp:featuredmedia']" :src="post._embedded['wp:featuredmedia']['0'].source_url" alt="">
-          <div v-If="!post._embedded['wp:featuredmedia']" class="logo">
+          <img v-if="post._embedded['wp:featuredmedia'] != undefined" :src="post._embedded['wp:featuredmedia']['0'].source_url" alt="">
+          <div v-if="post._embedded['wp:featuredmedia'] == undefined" class="logo">
             Banke <span class="and">&</span> Biznis
           </div>
           <div class="title">
            <div>
-             <h1 style="word-break: normal">{{ post.title.rendered }}
-             </h1>
+             <h1 style="word-break: normal">{{ post.title.rendered }}</h1>
            </div>
            <div>
              <p class="date"><b>Objavljeno: </b> {{ post.date | formatDate }}
