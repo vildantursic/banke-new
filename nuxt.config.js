@@ -37,7 +37,8 @@ module.exports = {
   },
   css: [
     {src: 'assets/main.scss', lang: 'scss'},
-    'swiper/dist/css/swiper.css'
+    'swiper/dist/css/swiper.css',
+    'semantic-ui-css/semantic.min.css'
   ],
   plugins: [
     { src: '~/plugins/swiper.js', ssr: false }

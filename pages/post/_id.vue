@@ -21,8 +21,8 @@
       <sui-grid-row>
         <sui-grid-column :width="10">
           <div class="">
-            <div class="image">
-              {{post.title.rendered}}
+            <div class="">
+              {{post.acf}}
             </div>
             <div v-html="post.content.rendered"></div>
           </div>
@@ -38,14 +38,9 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import SuiVue from 'semantic-ui-vue';
-import 'semantic-ui-css/semantic.min.css';
 import AppArticle from '@/components/AppArticle';
 import axios from 'axios';
 import moment from 'moment';
-
-Vue.use(SuiVue);
 
 export default {
   components: {

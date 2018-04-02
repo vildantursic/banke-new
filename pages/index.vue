@@ -1,27 +1,34 @@
 <template>
   <section class="container">
-    <sui-grid celled>
+    <sui-grid>
       <sui-grid-row>
         <AppSlider  :featured="items"></AppSlider>
       </sui-grid-row>
       <sui-grid-row>
-        <sui-grid-column :width="10">
+        <sui-grid-column :computer="10" :mobile="16">
           <div class="ui leaderboard test ad" data-text="Leaderboard"></div>
         </sui-grid-column>
-        <sui-grid-column :width="6">
+        <sui-grid-column :computer="6" :mobile="16">
           <div class="ui leaderboard test ad" data-text="Leaderboard"></div>
         </sui-grid-column>
       </sui-grid-row>
       <sui-grid-row>
-        <sui-grid-column :width="10">
+        <sui-grid-column :computer="10" :mobile="16">
           <div class="search-filter-section">
             <sui-input placeholder="Search..." v-model="search"/>
+            <div class="buttons">
+              <sui-button v-if="list" v-on:click="() => list = false" icon="th" />
+              <sui-button v-if="!list" v-on:click="() => list = true" icon="list ul" />
+            </div>
           </div>
-          <sui-card-group :items-per-row="2">
+          <sui-item-group divided v-if="list" :items-per-row="1">
+            <AppPostList v-for="(item, i) of filteredItems" :key="i" :data="item"></AppPostList>
+          </sui-item-group>
+          <sui-card-group v-if="!list" :items-per-row="2">
             <AppPost v-for="(item, i) of filteredItems" :key="i" :data="item"></AppPost>
           </sui-card-group>
         </sui-grid-column>
-        <sui-grid-column :width="6">
+        <sui-grid-column :computer="6" :mobile="16">
           <AppMagazine :magazine="magazines[0]"></AppMagazine>
           <div class="ui banner test ad" data-text="Banner"></div>
           <div class="side-section" v-for="(category, i) of categories" :key="i">
@@ -36,21 +43,18 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import SuiVue from 'semantic-ui-vue';
 import AppPost from '@/components/AppPost';
+import AppPostList from '@/components/AppPostList';
 import AppArticle from '@/components/AppArticle';
 import AppMiniHeader from '@/components/AppMiniHeader';
 import AppSlider from '@/components/AppSlider';
 import AppMagazine from '@/components/AppMagazine';
 import axios from 'axios';
-import 'semantic-ui-css/semantic.min.css';
-
-Vue.use(SuiVue);
 
 export default {
   components: {
     AppPost,
+    AppPostList,
     AppArticle,
     AppMiniHeader,
     AppSlider,
@@ -58,10 +62,12 @@ export default {
   },
   data () {
     return {
+      list: true,
       search: '',
       items: [],
       categories: [],
       magazines: [],
+      advertisements: [],
       listOfCategories: ['biznis', 'finansije']
     }
   },
@@ -69,6 +75,7 @@ export default {
     this.getItems();
     this.getCategories();
     this.getMagazines();
+    this.getAdvertisements();
   },
   computed: {
     filteredItems () {
@@ -87,7 +94,6 @@ export default {
     },
     getByCategory (id, name, slug) {
       axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/posts?categories=${id}&_embed`).then((response) => {
-        console.log(response.data)
         this.categories.push({
           name: name,
           slug: slug,
@@ -99,7 +105,6 @@ export default {
     },
     getCategories () {
       axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/categories`).then((response) => {
-        console.log(response.data);
         response.data.forEach(category => {
           if (this.listOfCategories.filter(item => item === category.slug).length !== 0) {
             this.getByCategory(category.id, category.name, category.slug);
@@ -111,8 +116,15 @@ export default {
     },
     getMagazines () {
       axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/magazines?_embed`).then((response) => {
-        console.log(response.data)
         this.magazines = response.data;
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    getAdvertisements () {
+      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/advertisements?_embed`).then((response) => {
+        console.log(response.data)
+        this.advertisements = response.data;
       }).catch((error) => {
         console.log(error);
       });
@@ -135,5 +147,8 @@ export default {
 
 .search-filter-section {
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
