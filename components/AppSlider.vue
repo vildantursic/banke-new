@@ -10,8 +10,11 @@
           <div class="slide__text">
             <div class="title" data-swiper-parallax="-100">{{item.title.rendered}}</div>
             <div class="subtitle" data-swiper-parallax="-200">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              {{item.acf.supertitle}}
             </div>
+            <router-link :to="{ name: 'post-id', params: { id: item.id } }">
+              <sui-button color="black" inverted>Procitaj vise</sui-button>
+            </router-link>
           </div>
         </div>
       </div>

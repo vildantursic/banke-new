@@ -17,9 +17,18 @@
           <div class="search-filter-section">
             <sui-input placeholder="Search..." v-model="search"/>
             <div class="buttons">
-              <sui-button v-if="list" v-on:click="() => list = false" icon="th" />
-              <sui-button v-if="!list" v-on:click="() => list = true" icon="list ul" />
+              <sui-button v-on:click="() => showFilters = !showFilters" icon="filter" />
+              <sui-button v-if="list" v-on:click="() => list = !list" icon="th" />
+              <sui-button v-if="!list" v-on:click="() => list = !list" icon="list ul" />
             </div>
+          </div>
+          <div v-if="showFilters" class="filters">
+            <sui-dropdown fluid
+                          multiple
+                          :options="allCategories"
+                          placeholder="Filters"
+                          selection
+                          v-model="current"/>
           </div>
           <sui-item-group divided v-if="list" :items-per-row="1">
             <AppPostList v-for="(item, i) of filteredItems" :key="i" :data="item"></AppPostList>
@@ -27,15 +36,14 @@
           <sui-card-group v-if="!list" :items-per-row="2">
             <AppPost v-for="(item, i) of filteredItems" :key="i" :data="item"></AppPost>
           </sui-card-group>
+          <div class="pagination">
+            <AppPagination :numberOfItems="items.length" :itemsPerPage="2" @onPageClick="setPage($event)"></AppPagination>
+          </div>
         </sui-grid-column>
         <sui-grid-column :computer="6" :mobile="16">
-          <AppMagazine :magazine="magazines[0]"></AppMagazine>
-          <div class="ui banner test ad" data-text="Banner"></div>
-          <div class="side-section" v-for="(category, i) of categories" :key="i">
-            <AppMiniHeader :title="category.name" :filter="category.slug"></AppMiniHeader>
-            <AppArticle v-for="(item, j) of category.items" :key="j"></AppArticle>
-            <div class="ui banner test ad" data-text="Banner"></div>
-          </div>
+          <AppSidebar :categories="categories"
+                      :magazines="magazines"
+                      :advertisements="advertisements"></AppSidebar>
         </sui-grid-column>
       </sui-grid-row>
     </sui-grid>
@@ -43,32 +51,35 @@
 </template>
 
 <script>
+import AppSlider from '@/components/AppSlider';
 import AppPost from '@/components/AppPost';
 import AppPostList from '@/components/AppPostList';
-import AppArticle from '@/components/AppArticle';
-import AppMiniHeader from '@/components/AppMiniHeader';
-import AppSlider from '@/components/AppSlider';
-import AppMagazine from '@/components/AppMagazine';
+import AppSidebar from '@/components/AppSidebar';
+import AppPagination from '@/components/AppPagination';
 import axios from 'axios';
+import * as _ from 'lodash';
 
 export default {
   components: {
+    AppSlider,
     AppPost,
     AppPostList,
-    AppArticle,
-    AppMiniHeader,
-    AppSlider,
-    AppMagazine
+    AppSidebar,
+    AppPagination
   },
   data () {
     return {
+      page: 1,
       list: true,
+      showFilters: false,
       search: '',
       items: [],
       categories: [],
       magazines: [],
       advertisements: [],
-      listOfCategories: ['biznis', 'finansije']
+      listOfCategories: ['biznis', 'finansije'],
+      current: [],
+      allCategories: [],
     }
   },
   created () {
@@ -80,11 +91,15 @@ export default {
   computed: {
     filteredItems () {
       return this.items.filter((item) => {
-        return item.title.rendered.toLowerCase().indexOf(this.search.toLowerCase()) >= 0;
+        return item.title.rendered.toLowerCase().indexOf(this.search.toLowerCase()) >= 0 &&
+        this.current.length != 0 ? _.intersection(item.categories, this.current).length != 0 : true;
       });
     }
   },
   methods: {
+    setPage (event) {
+      console.log(event);
+    },
     getItems () {
       axios.get('http://localhost/banke-new-cms/wp-json/wp/v2/posts?_embed').then((response) => {
         this.items = response.data;
@@ -105,6 +120,9 @@ export default {
     },
     getCategories () {
       axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/categories`).then((response) => {
+        this.allCategories = response.data.map(obj => {
+          return { key: obj.slug, text: obj.name, value: obj.id };
+        });
         response.data.forEach(category => {
           if (this.listOfCategories.filter(item => item === category.slug).length !== 0) {
             this.getByCategory(category.id, category.name, category.slug);
@@ -141,14 +159,20 @@ export default {
   @extend .page-size;
 }
 
-.side-section {
-  margin: 10px 0 0 0;
-}
-
 .search-filter-section {
   margin-bottom: 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.filters {
+  margin-bottom: 15px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

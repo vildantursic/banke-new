@@ -12,7 +12,6 @@
     </sui-card-content>
     <sui-card-content extra>
       <sui-button primary>Subscribe</sui-button>
-      <sui-button>Download</sui-button>
     </sui-card-content>
   </sui-card>
 </template>
@@ -32,7 +31,7 @@ export default {
   }
 
   button {
-    width: 40%;
+    width: 100%;
   }
 }
 </style>

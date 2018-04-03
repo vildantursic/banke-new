@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <sui-grid celled>
+    <sui-grid>
       <sui-grid-row>
         <div class="header">
           <img v-if="post._embedded['wp:featuredmedia'] != undefined" :src="post._embedded['wp:featuredmedia']['0'].source_url" alt="">
@@ -19,18 +19,15 @@
         </div>
       </sui-grid-row>
       <sui-grid-row>
-        <sui-grid-column :width="10">
+        <sui-grid-column class="post-content" :computer="10" :mobile="16">
           <div class="">
-            <div class="">
-              {{post.acf}}
-            </div>
             <div v-html="post.content.rendered"></div>
           </div>
         </sui-grid-column>
-        <sui-grid-column :width="6">
-          <div class="ui banner test ad" data-text="Banner"></div>
-          <AppArticle></AppArticle>
-          <div class="ui banner test ad" data-text="Banner"></div>
+        <sui-grid-column :computer="6" :mobile="16">
+          <AppSidebar :categories="categories"
+                     :magazines="magazines"
+                     :advertisements="advertisements"></AppSidebar>
         </sui-grid-column>
       </sui-grid-row>
     </sui-grid>
@@ -39,12 +36,14 @@
 
 <script>
 import AppArticle from '@/components/AppArticle';
+import AppSidebar from '@/components/AppSidebar';
 import axios from 'axios';
 import moment from 'moment';
 
 export default {
   components: {
-    AppArticle
+    AppArticle,
+    AppSidebar
   },
   data () {
     return {
@@ -55,8 +54,19 @@ export default {
         content: {
           rendered: ''
         }
-      }
+      },
+      items: [],
+      categories: [],
+      magazines: [],
+      advertisements: [],
+      listOfCategories: ['biznis', 'finansije']
     }
+  },
+  created () {
+    this.getItems();
+    this.getCategories();
+    this.getMagazines();
+    this.getAdvertisements();
   },
   async asyncData ({ req, params }) {
     return axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/posts/${params.id}?_embed`).then((response) => {
@@ -69,6 +79,52 @@ export default {
       if (value) {
         return moment(String(value)).format('MM/DD/YYYY');
       }
+    }
+  },
+  methods: {
+    getItems () {
+      axios.get('http://localhost/banke-new-cms/wp-json/wp/v2/posts?_embed').then((response) => {
+        this.items = response.data;
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    getByCategory (id, name, slug) {
+      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/posts?categories=${id}&_embed`).then((response) => {
+        this.categories.push({
+          name: name,
+          slug: slug,
+          items: response.data
+        });
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    getCategories () {
+      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/categories`).then((response) => {
+        response.data.forEach(category => {
+          if (this.listOfCategories.filter(item => item === category.slug).length !== 0) {
+            this.getByCategory(category.id, category.name, category.slug);
+          }
+        })
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    getMagazines () {
+      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/magazines?_embed`).then((response) => {
+        this.magazines = response.data;
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    getAdvertisements () {
+      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/advertisements?_embed`).then((response) => {
+        console.log(response.data)
+        this.advertisements = response.data;
+      }).catch((error) => {
+        console.log(error);
+      });
     }
   }
 }
@@ -124,4 +180,8 @@ export default {
   }
 }
 
+.post-content {
+  width: 100%;
+  overflow: hidden;
+}
 </style>

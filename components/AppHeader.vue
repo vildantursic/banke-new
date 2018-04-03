@@ -7,9 +7,9 @@
     </div>
 
     <div class="right menu">
-      <button class="ui secondary button tiny filter-fix" v-on:click="openMenu()">
+      <!-- <button class="ui secondary button tiny filter-fix" v-on:click="openMenu()">
         Filter
-      </button>
+      </button> -->
     </div>
   </sui-menu>
 </template>
@@ -34,6 +34,7 @@ export default {
 @import '../assets/leafs.scss';
 
 .fix-header {
+  height: 50px;
   background: linear-gradient(to right, #222222 35% , #8d3100, #ff7100);
   border-radius: 0;
   border: none;
