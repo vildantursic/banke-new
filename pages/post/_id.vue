@@ -21,6 +21,30 @@
       <sui-grid-row>
         <sui-grid-column class="post-content" :computer="10" :mobile="16">
           <div class="">
+            <social-sharing url="http://bih.banke-biznis.com/news/fipabosnaihercegovina"
+                      title="post.title.rendered"
+                      description="post.acf.subtitle"
+                      quote="post.acf.subtitle"
+                      hashtags="banke,biznis,blog"
+                      twitter-user="banke-biznis"
+                      inline-template>
+              <div>
+                  <network network="email">
+                      <i class="fa fa-envelope"></i> Email
+                  </network>
+                  <network network="facebook">
+                    <i class="fa fa-facebook"></i> Facebook
+                  </network>
+                  <network network="linkedin">
+                    <i class="fa fa-linkedin"></i> LinkedIn
+                  </network>
+                  <network network="twitter">
+                    <i class="fa fa-twitter"></i> Twitter
+                  </network>
+              </div>
+            </social-sharing>
+          </div>
+          <div class="">
             <div v-html="post.content.rendered"></div>
           </div>
         </sui-grid-column>
@@ -59,7 +83,7 @@ export default {
       categories: [],
       magazines: [],
       advertisements: [],
-      listOfCategories: ['biznis', 'finansije']
+      listOfCategories: ['video', 'column-and-analysis', 'interviews', 'lifestyle']
     }
   },
   created () {

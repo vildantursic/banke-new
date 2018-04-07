@@ -4,7 +4,7 @@
     <div class="ui banner test ad" data-text="Banner"></div>
     <div class="side-section" v-for="(category, i) of categories" :key="i">
       <AppMiniHeader :title="category.name" :filter="category.slug"></AppMiniHeader>
-      <AppArticle v-for="(item, j) of category.items" :key="j" :data="item" :isVideo="true"></AppArticle>
+      <AppArticle v-for="(item, j) of category.items" :key="j" :data="item" :isVideo="category.slug == 'video' ? true : false"></AppArticle>
       <div class="ui banner test ad" data-text="Banner"></div>
     </div>
   </div>

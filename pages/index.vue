@@ -77,7 +77,7 @@ export default {
       categories: [],
       magazines: [],
       advertisements: [],
-      listOfCategories: ['biznis', 'finansije'],
+      listOfCategories: ['video', 'column-and-analysis', 'interviews', 'lifestyle'],
       current: [],
       allCategories: [],
     }
