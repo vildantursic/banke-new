@@ -16,7 +16,7 @@
               {{item.acf.supertitle}}
             </div>
             <router-link :to="{ name: 'post-id', params: { id: item.id } }">
-              <sui-button color="black" inverted>Procitaj vise</sui-button>
+              <sui-button color="black" inverted>Pročitaj vise</sui-button>
             </router-link>
           </div>
         </div>
@@ -102,10 +102,12 @@ export default {
 
     .title {
       font-size: 41px;
+      line-height: 43px;
       font-weight: 300;
     }
     .subtitle {
       font-size: 21px;
+      line-height: 23px;
     }
   }
 }

@@ -22,10 +22,15 @@
           <sui-icon name="calendar alternate outline" />
           {{data.date | formatDate}}
         </span>
-        <a is="sui-label" color="blue">
-          Finances
-          <sui-label-detail>23</sui-label-detail>
-        </a>
+        <div class="">
+          <a is="sui-label" color="blue"
+                            v-for="(category, index) of filterCategories"
+                            :key="index"
+                            v-on:click="selectFilter(category.value)">
+            {{category.text}}
+            <sui-label-detail>{{category.count}}</sui-label-detail>
+          </a>
+        </div>
       </div>
     </sui-card-content>
   </sui-card>
@@ -33,14 +38,29 @@
 
 <script>
 import moment from 'moment';
+import * as _ from 'lodash';
 
 export default {
-  props: ['data'],
+  props: ['data', 'categories'],
   filters: {
     formatDate (value) {
       if (value) {
         return moment(String(value)).format('MM/DD/YYYY');
       }
+    }
+  },
+  computed: {
+    filterCategories () {
+      return this.data.categories.map((category, i) => {
+        if (i < 2) {
+          return _.find(this.categories, ['value', category]);
+        }
+      })
+    }
+  },
+  methods: {
+    selectFilter (data) {
+      this.$emit('onSelectFilter', data);
     }
   }
 }
@@ -59,6 +79,7 @@ export default {
     align-items: center;
     justify-content: center;
     background-color: #222222;
+    overflow: hidden;
   }
   .no-image {
     min-height: 230px;

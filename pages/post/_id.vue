@@ -83,7 +83,7 @@ export default {
       categories: [],
       magazines: [],
       advertisements: [],
-      listOfCategories: ['video', 'column-and-analysis', 'interviews', 'lifestyle']
+      listOfCategories: ['video', 'kolumne-i-analize', 'intervjui', 'lifestyle']
     }
   },
   created () {
@@ -93,7 +93,7 @@ export default {
     this.getAdvertisements();
   },
   async asyncData ({ req, params }) {
-    return axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/posts/${params.id}?_embed`).then((response) => {
+    return axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts/${params.id}?_embed`).then((response) => {
       console.log(response.data);
       return { post: response.data }
     })
@@ -107,14 +107,14 @@ export default {
   },
   methods: {
     getItems () {
-      axios.get('http://localhost/banke-new-cms/wp-json/wp/v2/posts?_embed').then((response) => {
+      axios.get('http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts?_embed').then((response) => {
         this.items = response.data;
       }).catch((error) => {
         console.log(error);
       });
     },
     getByCategory (id, name, slug) {
-      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/posts?categories=${id}&_embed`).then((response) => {
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts?categories=${id}&_embed`).then((response) => {
         this.categories.push({
           name: name,
           slug: slug,
@@ -125,7 +125,7 @@ export default {
       });
     },
     getCategories () {
-      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/categories`).then((response) => {
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/categories`).then((response) => {
         response.data.forEach(category => {
           if (this.listOfCategories.filter(item => item === category.slug).length !== 0) {
             this.getByCategory(category.id, category.name, category.slug);
@@ -136,14 +136,14 @@ export default {
       });
     },
     getMagazines () {
-      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/magazines?_embed`).then((response) => {
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/magazines?_embed`).then((response) => {
         this.magazines = response.data;
       }).catch((error) => {
         console.log(error);
       });
     },
     getAdvertisements () {
-      axios.get(`http://localhost/banke-new-cms/wp-json/wp/v2/advertisements?_embed`).then((response) => {
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/advertisements?_embed`).then((response) => {
         console.log(response.data)
         this.advertisements = response.data;
       }).catch((error) => {
@@ -207,5 +207,6 @@ export default {
 .post-content {
   width: 100%;
   overflow: hidden;
+  font-size: 1.2em;
 }
 </style>

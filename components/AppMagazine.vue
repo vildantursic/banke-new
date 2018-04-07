@@ -16,26 +16,36 @@
       </sui-card-content>
     </sui-card>
 
-    <sui-modal :size="small" v-model="open">
+    <sui-modal v-model="open">
       <sui-modal-header>Subscribe to Magazine</sui-modal-header>
       <sui-modal-content>
-        <sui-input placeholder="Email" />
-        <sui-input placeholder="Address" />
-        <sui-input placeholder="Phone" />
         <sui-modal-description>
           <sui-header>Info</sui-header>
           <p>
-            Postovanje cijenjeni korisnici,
+            Cijenjeni korisnici,
             <br>
-            Zahtjev za predplatu na magazin Banke se aktivira unosonjem vase email adrese u predvidjeno polje,
             <br>
-            Nakon sto vas nase osoblje kontaktira i potvrdi vase informacije slanjem svakog sljedeceg email-a dobit ce te povratni email na vasu adresu sa linkom za skidanje PDF-a magazina i direktni link na stranici za slidanje istog.
+            Zahtjev za predplatu na magazin Banke se aktivira unošonjem vaše email adrese u predvidjeno polje,
+            <br>
+            <br>
+            Nakon unošenja podataka dobit ce te email na vašu adresu sa linkom za potvrdu predplate.
+            <br>
+            <br>
+            Ukoliko budete imali pitanja mozete nam se obratiti na email <a href="mailto:info@banke-biznis.com">info@banke-biznis.com</a>
           </p>
         </sui-modal-description>
+        <div class="tnp tnp-subscription">
+          <form method="post" action="http://bih.banke-biznis.com/cms/?na=s" onsubmit="return newsletter_check(this)">
+            <div class="ui input"><input class="tnp-firstname" type="text" name="nn" placeholder="Name"></div>
+            <div class="ui input"><input class="tnp-email" type="email" name="ne" required placeholder="Email"></div>
+            <div class="ui checkbox"><label><input type="checkbox" name="ny" required class="tnp-privacy"> Subscribing I accept the privacy rules of this site</label></div>
+            <div class=""><input class="ui primary button" type="submit" value="Subscribe"></div>
+          </form>
+        </div>
       </sui-modal-content>
-      <sui-modal-actions>
-        <sui-button floated="right" positive @click.native="toggle">
-          OK
+      <sui-modal-actions class="actions">
+        <sui-button style="margin: 0 0 10px 0" floated="right" positive @click.native="toggle">
+          Close
         </sui-button>
       </sui-modal-actions>
     </sui-modal>
@@ -43,6 +53,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   props: ['magazine'],
   data() {
@@ -68,6 +80,20 @@ export default {
 
   button {
     width: 100%;
+  }
+}
+
+.tnp-subscription {
+  margin: 20px 0;
+
+  form {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+
+    * {
+        margin: 5px 0;
+    }
   }
 }
 </style>

@@ -20,9 +20,12 @@
         </p>
       </sui-item-description>
       <sui-item-extra>
-        <a is="sui-label" color="blue">
-          Finances
-          <sui-label-detail>23</sui-label-detail>
+        <a is="sui-label" color="blue"
+                          v-for="(category, index) of filterCategories"
+                          :key="index"
+                          v-on:click="selectFilter(category.value)">
+          {{category.text}}
+          <sui-label-detail>{{category.count}}</sui-label-detail>
         </a>
       </sui-item-extra>
     </sui-item-content>
@@ -33,12 +36,26 @@
 import moment from 'moment';
 
 export default {
-  props: ['data'],
+  props: ['data', 'categories'],
   filters: {
     formatDate (value) {
       if (value) {
         return moment(String(value)).format('MM/DD/YYYY');
       }
+    }
+  },
+  computed: {
+    filterCategories () {
+      return this.data.categories.map((category, i) => {
+        if (i < 2) {
+          return _.find(this.categories, ['value', category]);
+        }
+      })
+    }
+  },
+  methods: {
+    selectFilter (data) {
+      this.$emit('onSelectFilter', data);
     }
   }
 }
@@ -55,7 +72,8 @@ export default {
     height: 190px !important;
     display: flex !important;
     align-items: center !important;
-    background-color: #222222;
+    background-color: #222222 !important;
+    overflow: hidden !important;
   }
   .no-image {
     width: 250px !important;

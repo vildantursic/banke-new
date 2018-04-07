@@ -11,8 +11,13 @@
 }
 
 .test {
+  content: "";
   width: 100% !important;
   margin: 10px 0;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 .logo{

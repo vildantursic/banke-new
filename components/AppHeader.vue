@@ -38,6 +38,7 @@ export default {
   background: linear-gradient(to right, #222222 35% , #8d3100, #ff7100);
   border-radius: 0;
   border: none;
+  margin: 0;
   @extend .page-size;
 
   a {
