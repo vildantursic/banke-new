@@ -5,30 +5,8 @@
         Banke <span class="and">&</span> Biznis
       </router-link>
     </div>
-
-    <div class="right menu">
-      <!-- <button class="ui secondary button tiny filter-fix" v-on:click="openMenu()">
-        Filter
-      </button> -->
-    </div>
   </sui-menu>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      menu: false
-    }
-  },
-  methods: {
-    openMenu () {
-      this.menu = !this.menu;
-      this.$emit('onMenuClicked', this.menu);
-    }
-  }
-}
-</script>
 
 <style lang="scss" scoped>
 @import '../assets/leafs.scss';

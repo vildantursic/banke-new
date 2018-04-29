@@ -8,9 +8,9 @@
     </div>
     <sui-card-content>
       <sui-card-header class="fix-header">
-        <router-link :to="{ name: 'post-id', params: { id: data.id } }">
+        <nuxt-link :to="`/post/${data.slug}`">
           {{data.title.rendered}}
-        </router-link>
+        </nuxt-link>
         <h3>
           {{data.acf.subtitle}}
         </h3>
@@ -25,6 +25,7 @@
         <div class="">
           <a is="sui-label" color="blue"
                             v-for="(category, index) of filterCategories"
+                            v-if="category"
                             :key="index"
                             v-on:click="selectFilter(category.value)">
             {{category.text}}
@@ -38,7 +39,7 @@
 
 <script>
 import moment from 'moment';
-import * as _ from 'lodash';
+import { find } from 'lodash';
 
 export default {
   props: ['data', 'categories'],
@@ -53,7 +54,7 @@ export default {
     filterCategories () {
       return this.data.categories.map((category, i) => {
         if (i < 2) {
-          return _.find(this.categories, ['value', category]);
+          return find(this.categories, ['value', category]);
         }
       })
     }

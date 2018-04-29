@@ -1,22 +1,13 @@
 <template>
-  <div class="ui pagination menu">
+  <div class="ui pagination menu" v-if="numberOfItems > 0">
     <!-- {{(Math.ceil(numberOfItems / itemsPerPage))}} -->
-    <a class="icon item" v-on:click="onPageClick(currentPage - 1)">
+    <a class="icon item" v-on:click="onPageClick(currentPage - itemsPerPage)">
       <i class="left chevron icon"></i>
     </a>
 
-    <a class="item" v-if="!(currentPage < 3)">...</a>
+    <a class="item">{{Math.ceil(currentPage / itemsPerPage) + 1}} / {{Math.ceil(numberOfItems / itemsPerPage)}}</a>
 
-    <a class="item"
-      :class="{active: currentPage == index}"
-      v-if="index >= (currentPage - 2) && index <= (currentPage + 2)"
-      v-for="(pg, index) of Array(numberOfItems)"
-      :key="index"
-      v-on:click="onPageClick(index)">{{index + 1}}</a>
-
-    <a class="item" v-if="!(currentPage > numberOfItems - 4)">...</a>
-
-    <a class="icon item" v-on:click="onPageClick(currentPage + 1)">
+    <a class="icon item" v-on:click="onPageClick(currentPage + itemsPerPage)">
       <i class="right chevron icon"></i>
     </a>
   </div>
@@ -27,8 +18,9 @@ export default {
   props: ['currentPage', 'numberOfItems', 'itemsPerPage'],
   methods: {
     onPageClick(page) {
-      console.log(page)
-      this.$emit('onPageClick', page)
+      if (page >= 0 && page < this.numberOfItems) {
+        this.$emit('onPageClick', page)
+      }
     }
   }
 }

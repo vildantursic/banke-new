@@ -15,7 +15,7 @@
             <div class="subtitle" data-swiper-parallax="-200">
               {{item.acf.supertitle}}
             </div>
-            <router-link :to="{ name: 'post-id', params: { id: item.id } }">
+            <router-link :to="{ name: 'post-id', params: { id: item.slug } }">
               <sui-button color="black" inverted>Pročitaj vise</sui-button>
             </router-link>
           </div>
@@ -140,6 +140,10 @@ export default {
   flex-direction: column;
   text-align: left;
   color: white;
+
+  @media (max-width: 768px) {
+    width: 80vw;
+  }
 
   .title {
   }

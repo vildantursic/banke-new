@@ -19,31 +19,15 @@
         </div>
       </sui-grid-row>
       <sui-grid-row>
+        <sui-grid-column :computer="10" :mobile="16">
+          <AppAdvertisement :large="true" :advertisement="postAdvertisments[0]"></AppAdvertisement>
+        </sui-grid-column>
+        <sui-grid-column :computer="6" :mobile="16">
+          <AppAdvertisement :large="true" :advertisement="postAdvertisments[1]"></AppAdvertisement>
+        </sui-grid-column>
+      </sui-grid-row>
+      <sui-grid-row>
         <sui-grid-column class="post-content" :computer="10" :mobile="16">
-          <div class="">
-            <social-sharing url="http://bih.banke-biznis.com/news/fipabosnaihercegovina"
-                      title="post.title.rendered"
-                      description="post.acf.subtitle"
-                      quote="post.acf.subtitle"
-                      hashtags="banke,biznis,blog"
-                      twitter-user="banke-biznis"
-                      inline-template>
-              <div>
-                  <network network="email">
-                      <i class="fa fa-envelope"></i> Email
-                  </network>
-                  <network network="facebook">
-                    <i class="fa fa-facebook"></i> Facebook
-                  </network>
-                  <network network="linkedin">
-                    <i class="fa fa-linkedin"></i> LinkedIn
-                  </network>
-                  <network network="twitter">
-                    <i class="fa fa-twitter"></i> Twitter
-                  </network>
-              </div>
-            </social-sharing>
-          </div>
           <div class="">
             <div v-html="post.content.rendered"></div>
           </div>
@@ -51,7 +35,9 @@
         <sui-grid-column :computer="6" :mobile="16">
           <AppSidebar :categories="categories"
                      :magazines="magazines"
-                     :advertisements="advertisements"></AppSidebar>
+                     :advertisements="postAdvertisments"
+                     :clients="clients"
+                     :clientTypes="clientTypes"></AppSidebar>
         </sui-grid-column>
       </sui-grid-row>
     </sui-grid>
@@ -61,13 +47,21 @@
 <script>
 import AppArticle from '@/components/AppArticle';
 import AppSidebar from '@/components/AppSidebar';
+import AppAdvertisement from '@/components/AppAdvertisement';
 import axios from 'axios';
 import moment from 'moment';
+import { find } from 'lodash';
 
 export default {
+  head: {
+    script: [
+      { src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js' }
+    ]
+  },
   components: {
     AppArticle,
-    AppSidebar
+    AppSidebar,
+    AppAdvertisement
   },
   data () {
     return {
@@ -77,25 +71,33 @@ export default {
         },
         content: {
           rendered: ''
+        },
+        acf: {
+          advertisements: []
         }
       },
       items: [],
       categories: [],
       magazines: [],
       advertisements: [],
+      clients: [],
+      clientTypes: [],
       listOfCategories: ['video', 'kolumne-i-analize', 'intervjui', 'lifestyle']
     }
   },
-  created () {
+  mounted () {
     this.getItems();
     this.getCategories();
     this.getMagazines();
     this.getAdvertisements();
+    this.getClients();
+    this.getClientTypes();
   },
   async asyncData ({ req, params }) {
-    return axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts/${params.id}?_embed`).then((response) => {
-      console.log(response.data);
-      return { post: response.data }
+    return axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts/?slug=${params.id}`).then((res) => {
+      return axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts/${res.data[0].id}?_embed`).then((response) => {
+        return { post: response.data }
+      })
     })
   },
   filters: {
@@ -103,6 +105,13 @@ export default {
       if (value) {
         return moment(String(value)).format('MM/DD/YYYY');
       }
+    }
+  },
+  computed: {
+    postAdvertisments () {
+      return this.advertisements.filter(ad => {
+        return find(this.post.acf.advertisements, ['ID', ad.id])
+      })
     }
   },
   methods: {
@@ -142,9 +151,22 @@ export default {
         console.log(error);
       });
     },
+    getClients () {
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/clients?_embed`).then((response) => {
+        this.clients = response.data;
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    getClientTypes () {
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/client-types?_embed`).then((response) => {
+        this.clientTypes = response.data;
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
     getAdvertisements () {
       axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/advertisements?_embed`).then((response) => {
-        console.log(response.data)
         this.advertisements = response.data;
       }).catch((error) => {
         console.log(error);
@@ -178,8 +200,9 @@ export default {
     height: 100vh;
   }
 
-  .image {
-    height: 100%;
+  img {
+    max-height: 100%;
+    max-width: 100%;
   }
 
   .title {

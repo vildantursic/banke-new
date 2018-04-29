@@ -7,9 +7,9 @@
           Banke <span class="and">&</span> Biznis
         </div>
       </div>
-      <router-link :to="{ name: 'post-id', params: { id: data.id } }">
+      <nuxt-link :to="`/post/${data.slug}`">
         <h3 class="">{{data.title.rendered}}</h3>
-      </router-link>
+      </nuxt-link>
     </sui-card-content>
   </sui-card>
 </template>

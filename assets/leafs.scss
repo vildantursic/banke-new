@@ -10,16 +10,6 @@
   };
 }
 
-.test {
-  content: "";
-  width: 100% !important;
-  margin: 10px 0;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
 .logo{
   display: flex;
   align-items: center;
@@ -41,4 +31,21 @@
     color: #D32F2F;
     margin: 0 3px;
   }
+}
+
+.social-sharing {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.w3eden {
+  width: 100px !important;
+
+  * {
+    width: 100px;
+  }
+}
+
+.wpdm_icon {
+  width: 100px !important;
 }

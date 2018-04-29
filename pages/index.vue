@@ -6,10 +6,10 @@
       </sui-grid-row>
       <sui-grid-row>
         <sui-grid-column :computer="10" :mobile="16">
-          <div v-if="advertisements[1]" class="ui leaderboard test ad" :style="{background: 'url('+ advertisements[1]._embedded['wp:featuredmedia'][0].source_url +')  no-repeat center'}"></div>
+          <AppAdvertisement :large="true" :advertisement="advertisements[0]"></AppAdvertisement>
         </sui-grid-column>
         <sui-grid-column :computer="6" :mobile="16">
-          <div v-if="advertisements[0]" class="ui leaderboard test ad" :style="{background: 'url('+ advertisements[0]._embedded['wp:featuredmedia'][0].source_url +')  no-repeat center'}"></div>
+          <AppAdvertisement :large="true" :advertisement="advertisements[1]"></AppAdvertisement>
         </sui-grid-column>
       </sui-grid-row>
       <sui-grid-row>
@@ -17,7 +17,10 @@
           <div class="search-filter-section">
             <sui-input placeholder="Pretraži..." v-model="search"/>
             <div class="buttons">
-              <sui-button v-on:click="() => showFilters = !showFilters" icon="filter" />
+              <sui-button v-on:click="() => showFilters = !showFilters" content="Filter" icon="filter">
+                <a is="sui-label" slot="label" basic>{{current.length}}</a>
+              </sui-button>
+
               <sui-button v-if="list" v-on:click="() => list = !list" icon="th" />
               <sui-button v-if="!list" v-on:click="() => list = !list" icon="list ul" />
             </div>
@@ -25,25 +28,28 @@
           <div v-if="showFilters" class="filters">
             <sui-dropdown fluid
                           multiple
+                          v-if="allCategories.length !== 0"
                           :options="allCategories"
                           placeholder="Filters"
                           selection
                           v-model="current"/>
           </div>
           <sui-item-group divided v-if="list" :items-per-row="1">
-            <AppPostList v-for="(item, i) of paginatedItems" :key="i" :data="item" :categories="allCategories" @onSelectFilter="selectFilter($event)"></AppPostList>
+            <AppPostList v-for="(item, i) of limitBy(filteredItems, itemsPerPage, page)" :key="i" :data="item" :categories="allCategories" @onSelectFilter="selectFilter($event)"></AppPostList>
           </sui-item-group>
           <sui-card-group v-if="!list" :items-per-row="2" :stackable="true">
-            <AppPost v-for="(item, i) of paginatedItems" :key="i" :data="item" :categories="allCategories" @onSelectFilter="selectFilter($event)"></AppPost>
+            <AppPost v-for="(item, i) of limitBy(filteredItems, itemsPerPage, page)" :key="i" :data="item" :categories="allCategories" @onSelectFilter="selectFilter($event)"></AppPost>
           </sui-card-group>
           <div class="pagination">
-            <AppPagination :currentPage="page" :numberOfItems="numberOfItems" :itemsPerPage="itemsPerPage" @onPageClick="setPage($event)"></AppPagination>
+            <AppPagination :currentPage="page" :numberOfItems="filteredItems.length" :itemsPerPage="itemsPerPage" @onPageClick="page = $event"></AppPagination>
           </div>
         </sui-grid-column>
         <sui-grid-column :computer="6" :mobile="16">
           <AppSidebar :categories="categories"
                       :magazines="magazines"
                       :advertisements="advertisements"
+                      :clients="clients"
+                      :clientTypes="clientTypes"
                       @onFilterSelected="selectFilter($event)"></AppSidebar>
         </sui-grid-column>
       </sui-grid-row>
@@ -57,8 +63,9 @@ import AppPost from '@/components/AppPost';
 import AppPostList from '@/components/AppPostList';
 import AppSidebar from '@/components/AppSidebar';
 import AppPagination from '@/components/AppPagination';
+import AppAdvertisement from '@/components/AppAdvertisement';
 import axios from 'axios';
-import * as _ from 'lodash';
+import { intersection } from 'lodash';
 
 export default {
   components: {
@@ -66,12 +73,14 @@ export default {
     AppPost,
     AppPostList,
     AppSidebar,
-    AppPagination
+    AppPagination,
+    AppAdvertisement
   },
   data () {
     return {
-      page: 1,
-      itemsPerPage: 2,
+      loading: true,
+      page: 0,
+      itemsPerPage: 10,
       list: true,
       showFilters: false,
       search: '',
@@ -79,55 +88,53 @@ export default {
       categories: [],
       magazines: [],
       advertisements: [],
+      clients: [],
+      clientTypes: [],
       listOfCategories: ['video', 'kolumne-i-analize', 'intervjui', 'lifestyle'],
       current: [],
       allCategories: [],
     }
   },
-  created () {
-    this.getItems();
+  mounted () {
+    this.loading = false;
     this.getCategories();
     this.getMagazines();
     this.getAdvertisements();
+    this.getClients();
+    this.getClientTypes();
+  },
+  watch: {
+    search () {
+      this.page = 0;
+    }
   },
   computed: {
     numberOfItems () {
-      return Math.ceil(this.filteredItems.length / this.itemsPerPage);
+      return Math.ceil(this.items.length / this.page);
     },
     filteredItems () {
       return this.items.filter((item, i) => {
-        // console.log(((this.page - 1) * this.itemsPerPage), ((this.page * this.itemsPerPage)))
         return item.title.rendered.toLowerCase().indexOf(this.search.toLowerCase()) >= 0 &&
-        this.current.length != 0 ? _.intersection(item.categories, this.current).length != 0 : true;
+        this.current.length != 0 ? intersection(item.categories, this.current).length != 0 : true;
       });
-    },
-    paginatedItems() {
-      return this.filteredItems.filter((item, i) => {
-          return ((i >= (this.page - 1) * this.itemsPerPage) && (i < (this.page * this.itemsPerPage)));
-      })
     },
     filterFeatured () {
       return this.items.filter(item => {
-        return _.intersection(item.categories, [9]).length !== 0
+        return intersection(item.categories, [9]).length !== 0
       })
     }
   },
+  async asyncData({}) {
+    return axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts?_embed&per_page=100`).then((response) => {
+      return { items: response.data };
+    }).catch((error) => {
+      console.log(error);
+    });
+  },
   methods: {
-    setPage (event) {
-      if (event >= 1 && event < Math.ceil(this.items.length / this.itemsPerPage)) {
-        this.page = event;
-      }
-    },
     selectFilter (event) {
-      this.page = 1;
-      this.current.push(event);
-    },
-    getItems () {
-      axios.get('http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts?_embed').then((response) => {
-        this.items = response.data;
-      }).catch((error) => {
-        console.log(error);
-      });
+      console.log(event)
+      // this.current.push(event);
     },
     getByCategory (id, name, slug, count) {
       axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts?categories=${id}&_embed`).then((response) => {
@@ -163,9 +170,22 @@ export default {
         console.log(error);
       });
     },
+    getClients () {
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/clients?_embed`).then((response) => {
+        this.clients = response.data;
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
+    getClientTypes () {
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/client-types?_embed`).then((response) => {
+        this.clientTypes = response.data;
+      }).catch((error) => {
+        console.log(error);
+      });
+    },
     getAdvertisements () {
-      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/advertisements?_embed`).then((response) => {
-        console.log(response.data)
+      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/main_ads?_embed`).then((response) => {
         this.advertisements = response.data;
       }).catch((error) => {
         console.log(error);
@@ -188,6 +208,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    justify-content: center;
+
+    * {
+      margin-bottom: 10px;
+    }
+  }
 }
 
 .filters {

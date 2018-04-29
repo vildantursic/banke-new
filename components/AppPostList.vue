@@ -6,7 +6,7 @@
     </div>
     <sui-item-content>
       <sui-item-header>
-        <router-link :to="{ name: 'post-id', params: { id: data.id } }">{{data.title.rendered}}</router-link>
+        <nuxt-link :to="`/post/${data.slug}`">{{data.title.rendered}}</nuxt-link>
       </sui-item-header>
       <sui-item-meta>
         <span>
@@ -21,6 +21,7 @@
       </sui-item-description>
       <sui-item-extra>
         <a is="sui-label" color="blue"
+                          v-if="categories.length !== 0"
                           v-for="(category, index) of filterCategories"
                           :key="index"
                           v-on:click="selectFilter(category.value)">
@@ -33,7 +34,8 @@
 </template>
 
 <script>
-import moment from 'moment';
+  import moment from 'moment';
+  import { find } from 'lodash';
 
 export default {
   props: ['data', 'categories'],
@@ -48,7 +50,7 @@ export default {
     filterCategories () {
       return this.data.categories.map((category, i) => {
         if (i < 2) {
-          return _.find(this.categories, ['value', category]);
+          return find(this.categories, ['value', category]);
         }
       })
     }
