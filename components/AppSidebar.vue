@@ -1,7 +1,9 @@
 <template>
   <div class="sidebar">
     <AppMagazine :magazine="magazines[0]"></AppMagazine>
-    <AppMiniHeader v-on:click="goToForum()" :title="'Forum'" :filter="''"></AppMiniHeader>
+    <a href="http://banke.forumotion.me/" target="_blank">
+      <AppMiniHeader :title="'Forum'" :filter="''"></AppMiniHeader>
+    </a>
     <div class="ui banner test ad" data-text="Banner"></div>
     <div v-for="(clientType, j) of clientTypes" :key="j + 'type'">
       <AppMiniHeader v-if="categoryFilter(clientType).length !== 0" :title="clientType.name" :filter="''"></AppMiniHeader>
@@ -31,9 +33,6 @@ export default {
   },
   props: ['categories', 'magazines', 'advertisements', 'clients', 'clientTypes'],
   methods: {
-    goToForum () {
-      window.open('http://banke.forumotion.me/', '_blank');
-    },
     headerClicked (event) {
       this.$emit('onFilterSelected', event);
     },

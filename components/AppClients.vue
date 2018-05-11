@@ -58,7 +58,8 @@ export default {
 
 
 <style lang="scss" scoped>
-@import '../assets/leafs.scss';
+  @import '../assets/leafs';
+  @import '../assets/mixins';
 
 .my-client-swiper {
   height: 150px;
@@ -92,9 +93,10 @@ export default {
 
 .list-of-clients {
   display: flex;
+  @include grid-items(10px, 10px, 3, 2);
 
   .client-box {
-    width: 50%;
+    width: 100%;
     height: 200px;
     display: flex;
     align-items: center;

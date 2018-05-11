@@ -114,8 +114,9 @@ export default {
     },
     filteredItems () {
       return this.items.filter((item, i) => {
-        return item.title.rendered.toLowerCase().indexOf(this.search.toLowerCase()) >= 0 &&
-        this.current.length != 0 ? intersection(item.categories, this.current).length != 0 : true;
+        return item.title.rendered.toLowerCase().indexOf(this.search.toLowerCase()) >= 0;
+      }).filter(item => {
+        return this.current.length !== 0 ? intersection(item.categories, this.current).length !== 0 : true;
       });
     },
     filterFeatured () {
@@ -133,8 +134,7 @@ export default {
   },
   methods: {
     selectFilter (event) {
-      console.log(event)
-      // this.current.push(event);
+      this.current.push(event);
     },
     getByCategory (id, name, slug, count) {
       axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts?categories=${id}&_embed`).then((response) => {

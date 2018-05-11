@@ -25,8 +25,8 @@
                           v-for="(category, index) of filterCategories"
                           :key="index"
                           v-on:click="selectFilter(category.value)">
-          {{category.text}}
-          <sui-label-detail>{{category.count}}</sui-label-detail>
+          <span v-if="category">{{category.text}}</span>
+          <sui-label-detail v-if="category">{{category.count}}</sui-label-detail>
         </a>
       </sui-item-extra>
     </sui-item-content>
