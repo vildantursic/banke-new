@@ -1,6 +1,6 @@
 <template>
   <sui-card class="fix-card">
-    <div class="image-content">
+    <div class="image-content" v-if="data._embedded !== undefined">
       <sui-image class="fix-image" v-if="data._embedded['wp:featuredmedia'] != undefined" :src="data._embedded['wp:featuredmedia']['0'].source_url" />
       <div v-if="data._embedded['wp:featuredmedia'] == undefined" class="no-image logo">
         Banke <span class="and">&</span> Biznis

@@ -126,7 +126,7 @@ export default {
     }
   },
   async asyncData({}) {
-    return axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts?_embed&per_page=100`).then((response) => {
+    return axios.get(`http://banke.hotelsnjesko.ba/wp-json/wp/v2/posts?_embed&per_page=100`).then((response) => {
       return { items: response.data };
     }).catch((error) => {
       console.log(error);
@@ -137,7 +137,7 @@ export default {
       this.current.push(event);
     },
     getByCategory (id, name, slug, count) {
-      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/posts?categories=${id}&_embed`).then((response) => {
+      axios.get(`http://banke.hotelsnjesko.ba/wp-json/wp/v2/posts?categories=${id}&_embed`).then((response) => {
         this.categories.push({
           id: id,
           name: name,
@@ -150,7 +150,7 @@ export default {
       });
     },
     getCategories () {
-      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/categories`).then((response) => {
+      axios.get(`http://banke.hotelsnjesko.ba/wp-json/wp/v2/categories`).then((response) => {
         this.allCategories = response.data.map(obj => {
           return { key: obj.slug, text: obj.name, value: obj.id, count: obj.count };
         });
@@ -164,28 +164,28 @@ export default {
       });
     },
     getMagazines () {
-      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/magazines?_embed`).then((response) => {
+      axios.get(`http://banke.hotelsnjesko.ba/wp-json/wp/v2/magazines?_embed`).then((response) => {
         this.magazines = response.data;
       }).catch((error) => {
         console.log(error);
       });
     },
     getClients () {
-      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/clients?_embed`).then((response) => {
+      axios.get(`http://banke.hotelsnjesko.ba/wp-json/wp/v2/clients?_embed`).then((response) => {
         this.clients = response.data;
       }).catch((error) => {
         console.log(error);
       });
     },
     getClientTypes () {
-      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/client-types?_embed`).then((response) => {
+      axios.get(`http://banke.hotelsnjesko.ba/wp-json/wp/v2/client-types?_embed`).then((response) => {
         this.clientTypes = response.data;
       }).catch((error) => {
         console.log(error);
       });
     },
     getAdvertisements () {
-      axios.get(`http://bih.banke-biznis.com/cms/wp-json/wp/v2/main_ads?_embed`).then((response) => {
+      axios.get(`http://banke.hotelsnjesko.ba/wp-json/wp/v2/main_ads?_embed`).then((response) => {
         this.advertisements = response.data;
       }).catch((error) => {
         console.log(error);
